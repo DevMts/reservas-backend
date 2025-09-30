@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { AddressRepository } from "../repository/address-repository";
-import { InMemoryAddressRepository } from "../repository/in-memory-repository/in-memory-address-repository";
-import { InMemoryUserRepository } from "../repository/in-memory-repository/in-memory-user-repository";
-import type { UserRepository } from "../repository/user-repository";
-import { CreateAddressUseCase } from "./create-address";
+import type { AddressRepository } from "../../repository/address-repository";
+import { InMemoryAddressRepository } from "../../repository/in-memory-repository/in-memory-address-repository";
+import { InMemoryUserRepository } from "../../repository/in-memory-repository/in-memory-user-repository";
+import type { UserRepository } from "../../repository/user-repository";
+import { CreateAddressUseCase } from "../address/create-address";
+import { UserAlreadyExistsError } from "../errors/user-already-exists-error";
 import { CreateUserUseCase } from "./create-user";
-import { UserAlreadyExistsError } from "./errors/user-already-exists-error";
 
 describe("Create User Use Case", () => {
   let userRepository: UserRepository;
@@ -124,7 +124,7 @@ describe("Create User Use Case", () => {
       neighborhood: "Centro",
       house_number: "0",
       country: "Brasil",
-    })
+    });
 
     const { user } = await createUserUseCase.execute({
       name: "John Doe",
@@ -136,11 +136,11 @@ describe("Create User Use Case", () => {
       address: {
         connect: {
           id: address.id,
-        }
-      }
-    })
+        },
+      },
+    });
 
     expect(user.id).toEqual(expect.any(String));
     expect(user.id_address).toEqual(address.id);
-  })
+  });
 });

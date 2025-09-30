@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { AddressRepository } from "../repository/address-repository";
-import { InMemoryAddressRepository } from "../repository/in-memory-repository/in-memory-address-repository";
+import type { AddressRepository } from "../../repository/address-repository";
+import { InMemoryAddressRepository } from "../../repository/in-memory-repository/in-memory-address-repository";
 import { CreateAddressUseCase } from "./create-address";
 
 describe("Create Address Use Case", () => {

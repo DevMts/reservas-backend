@@ -1,5 +1,5 @@
 import type { Prisma } from "@prisma/client";
-import type { AddressRepository } from "../repository/address-repository";
+import type { AddressRepository } from "../../repository/address-repository";
 
 export class CreateAddressUseCase {
   constructor(private addressRepository: AddressRepository) { }

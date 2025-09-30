@@ -1,3 +1,4 @@
+import { log } from "node:console";
 import type { Prisma } from "@prisma/client";
 import type { Address, AddressRepository } from "../address-repository";
 
@@ -32,5 +33,22 @@ export class InMemoryAddressRepository implements AddressRepository {
     }
     this.items.splice(index, 1);
     return true;
+  }
+
+  async update(id: string, data: Prisma.AddressUpdateInput): Promise<Address> {
+    const index = this.items.findIndex((item) => item.id === id);
+    log(index);
+
+    if (index === -1) {
+      throw new Error("Address not found");
+    }
+
+    const address: Address = {
+      ...this.items[index],
+      ...(data as Address),
+      updatedAt: new Date(),
+    };
+    this.items[index] = address;
+    return address;
   }
 }

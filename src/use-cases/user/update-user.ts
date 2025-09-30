@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
-import type { UserRepository } from "../repository/user-repository";
-import { ResourceNotFoundError } from "./errors/resource-not-found-error";
-import { UserAlreadyExistsError } from "./errors/user-already-exists-error";
+import type { UserRepository } from "../../repository/user-repository";
+import { ResourceNotFoundError } from "../errors/resource-not-found-error";
+import { UserAlreadyExistsError } from "../errors/user-already-exists-error";
 
 export class UpdateUserUseCase {
   constructor(private userRepository: UserRepository) { }

@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
-import type { UserRepository } from "../repository/user-repository";
-import { UserAlreadyExistsError } from "./errors/user-already-exists-error";
+import type { UserRepository } from "../../repository/user-repository";
+import { UserAlreadyExistsError } from "../errors/user-already-exists-error";
 
 export class CreateUserUseCase {
   constructor(private userRepository: UserRepository) { }
