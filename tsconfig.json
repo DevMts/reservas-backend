@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"target": "esnext", // JavaScript moderno
+		"module": "esnext", // Import/export ES
+		"moduleResolution": "node", // Resolve módulos como Node
+		"strict": true, // Todas as checagens estritas
+		"esModuleInterop": true, // Compatibilidade com CommonJS
+		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true, // Ignora checagem de libs externas
+		"outDir": "dist", // Saída compilada
+		"rootDir": "src", // Código fonte
+		"declaration": true, // Gera arquivos .d.ts
+		"declarationMap": true, // Mapa para os .d.ts
+		"sourceMap": true // Mapas para debug
+	},
+	"paths": {
+		"@/*": ["src/*"] // Alias para src
+	},
+	"include": ["src"], // Onde o TS deve compilar
+	"exclude": ["node_modules", "dist"] // Ignorar essas pastas
+}

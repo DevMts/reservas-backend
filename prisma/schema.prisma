@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========== BETTER AUTH MODELS ==========
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+  
+  // Better Auth relationships
+  sessions      Session[]
+  accounts      Account[]
+  
+  // Custom fields
+  date_birth    DateTime
+  cpf           String    @unique @db.Char(11)
+  ddd           String    @db.Char(2)
+  phone         String    @db.VarChar(15)
+  id_address    String?   @unique
+  
+  // Custom relationships
+  address       Address?  @relation(fields: [id_address], references: [id], onDelete: SetNull)
+  houses        House[]   @relation("HouseOwner")
+  rentals       Rental[]
+  
+  @@map("user")
+}
+
+model Address {
+  id            String   @id @default(uuid())
+  cep           String   @db.Char(8)
+  road          String   @db.VarChar(100)
+  neighborhood  String   @db.VarChar(100)
+  house_number  String   @db.VarChar(10)
+  city          String   @db.VarChar(100)
+  state         String   @db.VarChar(45)
+  country       String   @db.VarChar(45)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+  
+  user          User?
+  houses        House[]
+  
+  @@map("address")
+}
+
+model House {
+  id          String   @id @default(uuid())
+  price       Decimal  @db.Decimal(10, 2)
+  description String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  
+  id_owner    String
+  owner       User     @relation("HouseOwner", fields: [id_owner], references: [id], onDelete: Cascade)
+  
+  id_address  String   @unique
+  address     Address  @relation(fields: [id_address], references: [id], onDelete: Cascade)
+  
+  rentals     Rental[]
+  
+  @@map("house")
+}
+
+model Rental {
+  id        String   @id @default(uuid())
+  check_in  DateTime @db.Timestamp()
+  check_out DateTime @db.Timestamp()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  
+  id_user   String
+  user      User     @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  
+  id_house  String
+  house     House    @relation(fields: [id_house], references: [id], onDelete: Cascade)
+  
+  @@map("rental")
+}
+
+// ========== BETTER AUTH REQUIRED MODELS ==========
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@unique([providerId, accountId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  
+  @@unique([identifier, value])
+  @@map("verification")
+}
