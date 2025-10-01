@@ -11,11 +11,19 @@
 		"rootDir": "src", // Código fonte
 		"declaration": true, // Gera arquivos .d.ts
 		"declarationMap": true, // Mapa para os .d.ts
-		"sourceMap": true // Mapas para debug
+		"sourceMap": true, // Mapas para debug
+		"baseUrl": ".", // Base para resolver os paths,
+		"paths": {
+			"@/*": [
+				"src/*"
+			] // Alias para src
+		}
 	},
-	"paths": {
-		"@/*": ["src/*"] // Alias para src
-	},
-	"include": ["src"], // Onde o TS deve compilar
-	"exclude": ["node_modules", "dist"] // Ignorar essas pastas
+	"include": [
+		"src"
+	], // Onde o TS deve compilar
+	"exclude": [
+		"node_modules",
+		"dist"
+	] // Ignorar essas pastas
 }

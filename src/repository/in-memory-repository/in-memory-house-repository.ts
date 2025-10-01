@@ -1,20 +1,19 @@
-import type { Prisma } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
-import type { House, HouseRepository } from "../house-repository";
+import type { House, HouseCreateInput, HouseRepository } from "../house-repository";
 
 export class InMemoryHouseRepository implements HouseRepository {
   public items: House[] = [];
 
-  async create(data: Prisma.HouseCreateInput): Promise<House> {
-    const house: House = {
-      id: crypto.randomUUID() as string,
-      price: new Decimal(data.price as number),
+  async create(data: HouseCreateInput): Promise<House> {
+    const house = {
+      id: data.id ?? crypto.randomUUID(),
+      price: data.price,
       description: data.description,
-      id_owner: (data.owner as { connect: { id: string } }).connect.id,
-      id_address: (data.address as { connect: { id: string } }).connect.id,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+      createdAt: data.createdAt ?? new Date(),
+      updatedAt: data.updatedAt ?? new Date(),
+      id_owner: data.id_owner,
+      id_address: data.id_address,
+      rentals: data.rentals ?? [],
+    }
 
     this.items.push(house);
 
@@ -35,7 +34,7 @@ export class InMemoryHouseRepository implements HouseRepository {
     return this.items;
   }
 
-  async update(id: string, data: House): Promise<House | null> {
+  async update(id: string, data: Partial<House>): Promise<House | null> {
     const houseIndex = this.items.findIndex((item) => item.id === id);
 
     if (houseIndex === -1) {
@@ -52,6 +51,7 @@ export class InMemoryHouseRepository implements HouseRepository {
 
     return house;
   }
+
 
   async delete(id: string): Promise<boolean> {
     const houseIndex = this.items.findIndex((item) => item.id === id);

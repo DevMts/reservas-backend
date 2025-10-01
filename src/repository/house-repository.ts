@@ -1,11 +1,29 @@
-import type { House, Prisma } from "@prisma/client";
+export interface House {
+  id: string;
+  price: number;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+  id_owner: string;
+  id_address: string;
+  rentals?: string[];
+}
 
-export type { House };
+export interface HouseCreateInput {
+  id?: string;
+  price: number;
+  description: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  id_owner: string;
+  id_address: string;
+  rentals?: string[];
+}
 
 export interface HouseRepository {
-  create(data: Prisma.HouseCreateInput): Promise<House>;
+  create(data: HouseCreateInput): Promise<House>;
   findById(id: string): Promise<House | null>;
   findMany(): Promise<House[]>;
-  update(id: string, data: House): Promise<House | null>;
+  update(id: string, data: Partial<House>): Promise<House | null>;
   delete(id: string): Promise<boolean>;
 }
