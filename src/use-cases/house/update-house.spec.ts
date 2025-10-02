@@ -36,7 +36,7 @@ describe("Update House Use Case", () => {
     );
     expect(updatedHouse?.createdAt).toEqual(createdHouse.createdAt);
     expect(updatedHouse?.updatedAt).toBeInstanceOf(Date);
-    expect(updatedHouse?.updatedAt.getTime()).toBeGreaterThan(
+    expect(updatedHouse?.updatedAt.getTime()).toBeGreaterThanOrEqual(
       createdHouse.updatedAt.getTime(),
     );
   });

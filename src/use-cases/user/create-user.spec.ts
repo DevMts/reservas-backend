@@ -133,11 +133,7 @@ describe("Create User Use Case", () => {
       date_birth: new Date(),
       ddd: "11",
       phone: "999999999",
-      address: {
-        connect: {
-          id: address.id,
-        },
-      },
+      id_address: address.id,
     });
 
     expect(user.id).toEqual(expect.any(String));

@@ -1,11 +1,10 @@
-import type { Prisma } from "@prisma/client";
-import type { UserRepository } from "../../repository/user-repository";
+import type { UserCreateInput, UserRepository } from "../../repository/user-repository";
 import { UserAlreadyExistsError } from "../errors/user-already-exists-error";
 
 export class CreateUserUseCase {
   constructor(private userRepository: UserRepository) { }
 
-  async execute(data: Prisma.UserCreateInput) {
+  async execute(data: UserCreateInput) {
     if (!data.name) {
       throw new Error("Name is required");
     }

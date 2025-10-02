@@ -1,10 +1,9 @@
-import type { Prisma } from "@prisma/client";
-import type { AddressRepository } from "../../repository/address-repository";
+import type { AddressCreateInput, AddressRepository } from "../../repository/address-repository";
 
 export class CreateAddressUseCase {
   constructor(private addressRepository: AddressRepository) { }
 
-  async execute(data: Prisma.AddressCreateInput) {
+  async execute(data: AddressCreateInput) {
     if (!data.road) {
       throw new Error("Street is required");
     }

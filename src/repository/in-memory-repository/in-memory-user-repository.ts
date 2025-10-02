@@ -1,12 +1,10 @@
 // biome-ignore assist/source/organizeImports: true
-import type { UserRepository, User } from "../user-repository";
-
-import type { Prisma } from "@prisma/client";
+import type { UserRepository, User, UserCreateInput } from "../user-repository";
 
 export class InMemoryUserRepository implements UserRepository {
   private users: User[] = [];
 
-  async create(data: Prisma.UserCreateInput): Promise<User> {
+  async create(data: UserCreateInput): Promise<User> {
     const newUser: User = {
       id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       email: data.email,
@@ -20,7 +18,7 @@ export class InMemoryUserRepository implements UserRepository {
       cpf: data.cpf,
       ddd: data.ddd,
       phone: data.phone,
-      id_address: (data.address as { connect: { id: string } })?.connect?.id ?? null,
+      id_address: data.id_address ?? null,
     };
 
     this.users.push(newUser);
@@ -46,7 +44,7 @@ export class InMemoryUserRepository implements UserRepository {
     return this.users;
   }
 
-  async update(id: string, data: Prisma.UserUpdateInput): Promise<User | null> {
+  async update(id: string, data: Partial<User>): Promise<User | null> {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {
@@ -63,7 +61,7 @@ export class InMemoryUserRepository implements UserRepository {
       cpf: (data.cpf as string) ?? this.users[index].cpf,
       ddd: (data.ddd as string) ?? this.users[index].ddd,
       phone: (data.phone as string) ?? this.users[index].phone,
-      id_address: ((data.address as { connect: { id: string } })?.connect?.id ?? null) ?? this.users[index].id_address,
+      id_address: data.id_address ?? this.users[index].id_address,
       updatedAt: new Date(),
     };
 

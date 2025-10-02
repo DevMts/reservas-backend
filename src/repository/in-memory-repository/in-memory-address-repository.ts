@@ -1,11 +1,13 @@
-import { log } from "node:console";
-import type { Prisma } from "@prisma/client";
-import type { Address, AddressRepository } from "../address-repository";
+import type {
+  Address,
+  AddressCreateInput,
+  AddressRepository,
+} from "../address-repository";
 
 export class InMemoryAddressRepository implements AddressRepository {
   public items: Address[] = [];
 
-  async create(data: Prisma.AddressCreateInput): Promise<Address> {
+  async create(data: AddressCreateInput): Promise<Address> {
     const address: Address = {
       id: crypto.randomUUID(),
       ...data,
@@ -35,9 +37,9 @@ export class InMemoryAddressRepository implements AddressRepository {
     return true;
   }
 
-  async update(id: string, data: Prisma.AddressUpdateInput): Promise<Address> {
+  async update(id: string, data: Partial<Address>): Promise<Address> {
     const index = this.items.findIndex((item) => item.id === id);
-    log(index);
+
 
     if (index === -1) {
       throw new Error("Address not found");
