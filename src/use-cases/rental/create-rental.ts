@@ -6,6 +6,10 @@ import type {
   RentalRepository,
 } from "@/repository/rental-repository";
 import type { UserRepository } from "@/repository/user-repository";
+import { HouseAlreadyRentedError } from "../errors/house-already-rented-error";
+import { HouseNotFoundError } from "../errors/house-not-found-error";
+import { InvalidCheckOutDateError } from "../errors/invalid-check-out-date-error";
+import { UserNotFoundError } from "../errors/user-not-found-error";
 
 export class CreateRentalUseCase {
   constructor(
@@ -17,16 +21,16 @@ export class CreateRentalUseCase {
   async execute(data: RentalCreateInput): Promise<Rental> {
     const userExists = await this.userRepo.findById(data.user);
     if (!userExists) {
-      throw new Error("User does not exist");
+      throw new UserNotFoundError();
     }
 
     const houseExists = await this.houseRepository.findById(data.house);
     if (!houseExists) {
-      throw new Error("House does not exist");
+      throw new HouseNotFoundError();
     }
 
     if (data.check_in >= data.check_out) {
-      throw new Error("Check-out date must be after check-in date");
+      throw new InvalidCheckOutDateError();
     }
 
     const rentalsInSamePeriod =
@@ -44,7 +48,7 @@ export class CreateRentalUseCase {
     });
 
     if (isHouseAlreadyRented) {
-      throw new Error("House is already rented in this period");
+      throw new HouseAlreadyRentedError();
     }
 
     const rental = await this.rentalRepository.create(data);

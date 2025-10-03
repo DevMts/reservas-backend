@@ -4,6 +4,10 @@ import { InMemoryHouseRepository } from "@/repository/in-memory-repository/in-me
 import { InMemoryRentalRepository } from "@/repository/in-memory-repository/in-memory-rental-repository";
 import { InMemoryUserRepository } from "@/repository/in-memory-repository/in-memory-user-repository";
 import type { User } from "@/repository/user-repository";
+import { HouseAlreadyRentedError } from "../errors/house-already-rented-error";
+import { HouseNotFoundError } from "../errors/house-not-found-error";
+import { InvalidCheckOutDateError } from "../errors/invalid-check-out-date-error";
+import { UserNotFoundError } from "../errors/user-not-found-error";
 import { CreateRentalUseCase } from "./create-rental";
 
 describe("Create Rental Use Case", () => {
@@ -67,9 +71,7 @@ describe("Create Rental Use Case", () => {
       check_out: new Date("2024-01-15"),
     };
 
-    await expect(sut.execute(rentalData)).rejects.toThrow(
-      "User does not exist",
-    );
+    await expect(sut.execute(rentalData)).rejects.toBeInstanceOf(UserNotFoundError);
   });
 
   it("should not be able to create a rental if house does not exist", async () => {
@@ -80,9 +82,7 @@ describe("Create Rental Use Case", () => {
       check_out: new Date("2024-01-15"),
     };
 
-    await expect(sut.execute(rentalData)).rejects.toThrow(
-      "House does not exist",
-    );
+    await expect(sut.execute(rentalData)).rejects.toBeInstanceOf(HouseNotFoundError);
   });
 
   it("should not be able to create a rental with check-out date before check-in date", async () => {
@@ -93,8 +93,8 @@ describe("Create Rental Use Case", () => {
       check_out: new Date("2024-01-10"),
     };
 
-    await expect(sut.execute(rentalData)).rejects.toThrow(
-      "Check-out date must be after check-in date",
+    await expect(sut.execute(rentalData)).rejects.toBeInstanceOf(
+      InvalidCheckOutDateError,
     );
   });
 
@@ -115,8 +115,8 @@ describe("Create Rental Use Case", () => {
       check_out: new Date("2024-02-25"),
     };
 
-    await expect(sut.execute(overlappingRentalData1)).rejects.toThrow(
-      "House is already rented in this period",
+    await expect(sut.execute(overlappingRentalData1)).rejects.toBeInstanceOf(
+      HouseAlreadyRentedError,
     );
 
     // Tentativa de novo aluguel com sobreposição (fim durante o aluguel existente)
@@ -127,8 +127,8 @@ describe("Create Rental Use Case", () => {
       check_out: new Date("2024-02-15"),
     };
 
-    await expect(sut.execute(overlappingRentalData2)).rejects.toThrow(
-      "House is already rented in this period",
+    await expect(sut.execute(overlappingRentalData2)).rejects.toBeInstanceOf(
+      HouseAlreadyRentedError,
     );
 
     // Tentativa de novo aluguel que engloba o aluguel existente
@@ -139,8 +139,8 @@ describe("Create Rental Use Case", () => {
       check_out: new Date("2024-02-25"),
     };
 
-    await expect(sut.execute(overlappingRentalData3)).rejects.toThrow(
-      "House is already rented in this period",
+    await expect(sut.execute(overlappingRentalData3)).rejects.toBeInstanceOf(
+      HouseAlreadyRentedError,
     );
 
     // Tentativa de novo aluguel contido dentro do aluguel existente
@@ -151,8 +151,8 @@ describe("Create Rental Use Case", () => {
       check_out: new Date("2024-02-18"),
     };
 
-    await expect(sut.execute(overlappingRentalData4)).rejects.toThrow(
-      "House is already rented in this period",
+    await expect(sut.execute(overlappingRentalData4)).rejects.toBeInstanceOf(
+      HouseAlreadyRentedError,
     );
   });
 });

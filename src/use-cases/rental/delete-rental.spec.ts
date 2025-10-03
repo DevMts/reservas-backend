@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { InMemoryRentalRepository } from "@/repository/in-memory-repository/in-memory-rental-repository";
 import type { Rental } from "@/repository/rental-repository";
+import { RentalNotFoundError } from "../errors/rental-not-found-error";
 import { DeleteRentalUseCase } from "./delete-rental";
 
 describe("Delete Rental Use Case", () => {
@@ -42,8 +43,8 @@ describe("Delete Rental Use Case", () => {
   it("should throw an error if the rental does not exist", async () => {
     const nonExistingId = "non-existing-id";
 
-    await expect(sut.execute(nonExistingId)).rejects.toThrow(
-      "Rental not found",
+    await expect(sut.execute(nonExistingId)).rejects.toBeInstanceOf(
+      RentalNotFoundError,
     );
 
     expect(rentalRepository.items).toHaveLength(2);

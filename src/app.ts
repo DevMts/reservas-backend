@@ -2,12 +2,14 @@ import "dotenv/config";
 import fastifyCors from "@fastify/cors";
 import fastifyRoutes from "@fastify/routes";
 import fastify from "fastify";
-import { env } from "./env";
+import { auth } from "./lib/auth";
 
-export const app = fastify();
+export const app = fastify({
+  logger: true,
+});
+
 app.register(fastifyRoutes);
 
-// Configure CORS policies
 app.register(fastifyCors, {
   origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -16,13 +18,36 @@ app.register(fastifyCors, {
   maxAge: 86400,
 });
 
-// Mount authentication handler after CORS registration
-// (Use previous handler configuration here)
+// Use a API diretamente do Better Auth (sem toNodeHandler)
+app.all("/api/auth/*", async (request, reply) => {
+  console.log("🔵 Request:", request.method, request.url);
 
-app.listen({ port: env.PORT }, (err, address) => {
-  if (err) {
-    console.error(err);
-    process.exit(1);
+  request.url.replace("/api/auth", "");
+
+  try {
+    // Chama a API interna do Better Auth
+    const response = await auth.handler(
+      new Request(`http://localhost${request.url}`, {
+        method: request.method,
+        headers: request.headers as HeadersInit,
+        body: request.method !== "GET" ? JSON.stringify(request.body) : undefined,
+      })
+    );
+
+    // Copia headers da resposta
+    response.headers.forEach((value, key) => {
+      reply.header(key, value);
+    });
+
+    // Envia o corpo da resposta
+    const data = await response.json();
+    return reply.code(response.status).send(data);
+  } catch (error) {
+    console.error("❌ Error:", error);
+    return reply.code(500).send({ error: "Internal server error" });
   }
-  console.log(`Server listening at ${address}, in ${env.PORT} mode`);
+});
+
+app.get("/health", async () => {
+  return { status: "ok" };
 });

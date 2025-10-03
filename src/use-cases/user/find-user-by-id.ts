@@ -1,7 +1,7 @@
 import type { UserRepository } from "../../repository/user-repository";
 import { ResourceNotFoundError } from "../errors/resource-not-found-error";
 
-export class FindByIdUseCase {
+export class FindUserByIdUseCase {
   constructor(private userRepository: UserRepository) { }
 
   async execute(id: string) {

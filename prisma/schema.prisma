@@ -24,12 +24,12 @@ model User {
   sessions      Session[]
   accounts      Account[]
   
-  // Custom fields
-  date_birth    DateTime
-  cpf           String    @unique @db.Char(11)
-  ddd           String    @db.Char(2)
-  phone         String    @db.VarChar(15)
-  id_address    String?   @unique
+  // Custom fields - OPCIONAIS para permitir cadastro inicial
+  date_birth    DateTime?
+  cpf           String?    @unique @db.Char(11)
+  ddd           String?    @db.Char(2)
+  phone         String?    @db.VarChar(15)
+  id_address    String?    @unique
   
   // Custom relationships
   address       Address?  @relation(fields: [id_address], references: [id], onDelete: SetNull)

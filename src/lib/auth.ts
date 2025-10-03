@@ -8,10 +8,9 @@ const prisma = new PrismaClient();
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
-    provider: "postgresql", // ou seu provider
+    provider: "postgresql",
   }),
   emailAndPassword: {
     enabled: true,
-  }, // URL do seu frontend
-  // Outras configurações...
+  },
 });
