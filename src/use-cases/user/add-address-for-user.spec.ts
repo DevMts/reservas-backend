@@ -13,8 +13,8 @@ describe("Add Address for User Profile Use Case", () => {
   let address: Address;
 
   beforeEach(async () => {
-    userRepository = new InMemoryUserRepository();
     addressRepository = new InMemoryAddressRepository();
+    userRepository = new InMemoryUserRepository(addressRepository);
     sut = new AddAddressForUserProfileCase(userRepository, addressRepository);
 
     // Create a base user and address for tests
@@ -39,7 +39,7 @@ describe("Add Address for User Profile Use Case", () => {
 
     expect(updatedUser.id_address).toBe(address.id);
 
-    const userInDb = await userRepository.findById(user.id);
+    const userInDb = await userRepository.findById(user.id); // Verifica se o usuário foi atualizado no "banco de dados"
     expect(userInDb?.id_address).toBe(address.id);
   });
 
@@ -61,7 +61,7 @@ describe("Add Address for User Profile Use Case", () => {
 
   it("should throw an error if the user update fails", async () => {
     // Mock the update method to simulate a failure
-    vi.spyOn(userRepository, "update").mockResolvedValueOnce(null);
+    vi.spyOn(userRepository, "addAddress").mockResolvedValueOnce(null);
 
     await expect(sut.execute(user.id, address.id)).rejects.toThrow(
       "Failed to add address to user profile",

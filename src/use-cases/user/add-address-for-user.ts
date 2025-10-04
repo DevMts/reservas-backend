@@ -18,9 +18,7 @@ export class AddAddressForUserProfileCase {
       throw new Error("Address not found");
     }
 
-    const updatedUser = await this.userRepository.update(userId, {
-      id_address: addressId,
-    });
+    const updatedUser = await this.userRepository.addAddress(userId, addressId);
 
     if (!updatedUser) {
       throw new Error("Failed to add address to user profile");

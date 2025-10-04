@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
 import { PrismaAddressRepository } from "@/repository/prisma/prisma-address-repository";
 import { CreateAddressUseCase } from "@/use-cases/address/create-address";
-export async function CreateAddress(
+export async function createAddressController(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {

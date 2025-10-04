@@ -97,7 +97,13 @@ describe("Complete User Profile Use Case", () => {
     vi.spyOn(userRepository, "update").mockResolvedValueOnce(null);
 
     await expect(
-      sut.execute({ userId: user.id, cpf: "123" } as any),
+      sut.execute({
+        userId: user.id,
+        cpf: "12345678901",
+        date_birth: new Date(),
+        ddd: "99",
+        phone: "999999999",
+      }),
     ).rejects.toThrow("Failed to update user profile");
   });
 });

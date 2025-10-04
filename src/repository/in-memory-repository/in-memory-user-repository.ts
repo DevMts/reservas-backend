@@ -1,8 +1,12 @@
 // biome-ignore assist/source/organizeImports: true
-import type { UserRepository, User, UserCreateInput } from "../user-repository";
+import type { Address } from "@prisma/client";
+import type { UserRepository, User, UserCreateInput, UserWithAddress } from "../user-repository";
+import type { InMemoryAddressRepository } from "./in-memory-address-repository";
 
 export class InMemoryUserRepository implements UserRepository {
   private users: User[] = [];
+
+  constructor(private addressRepo: InMemoryAddressRepository) { }
 
   async create(data: UserCreateInput): Promise<User> {
     const newUser: User = {
@@ -15,9 +19,9 @@ export class InMemoryUserRepository implements UserRepository {
       updatedAt: new Date(),
       // Campos customizados
       date_birth: data.date_birth as Date,
-      cpf: data.cpf,
-      ddd: data.ddd,
-      phone: data.phone,
+      cpf: data.cpf ?? null,
+      ddd: data.ddd ?? null,
+      phone: data.phone ?? null,
       id_address: data.id_address ?? null,
     };
 
@@ -44,6 +48,23 @@ export class InMemoryUserRepository implements UserRepository {
     return this.users;
   }
 
+  async listUserAndAddressById(
+    id: string,
+  ): Promise<(UserWithAddress | null)> {
+    const user = this.users.find((user) => user.id === id);
+
+    if (!user) {
+      return null;
+    }
+
+    const address = await this.addressRepo.findById(user.id_address as string);
+
+    return {
+      user,
+      address,
+    };
+  }
+
   async update(id: string, data: Partial<User>): Promise<User | null> {
     const index = this.users.findIndex((user) => user.id === id);
 
@@ -55,7 +76,8 @@ export class InMemoryUserRepository implements UserRepository {
       ...this.users[index],
       email: (data.email as string) ?? this.users[index].email,
       name: (data.name as string) ?? this.users[index].name,
-      emailVerified: (data.emailVerified as boolean) ?? this.users[index].emailVerified,
+      emailVerified:
+        (data.emailVerified as boolean) ?? this.users[index].emailVerified,
       image: (data.image as string | null) ?? this.users[index].image,
       date_birth: (data.date_birth as Date) ?? this.users[index].date_birth,
       cpf: (data.cpf as string) ?? this.users[index].cpf,
@@ -67,6 +89,17 @@ export class InMemoryUserRepository implements UserRepository {
 
     this.users[index] = updatedUser;
     return updatedUser;
+  }
+  async addAddress(id: string, addressId: string): Promise<User | null> {
+    const userIndex = this.users.findIndex((user) => user.id === id);
+    if (userIndex === -1) {
+      return null;
+    }
+    const user = this.users[userIndex];
+    user.id_address = addressId;
+    user.updatedAt = new Date();
+    this.users[userIndex] = user;
+    return user;
   }
 
   async delete(id: string): Promise<boolean> {
