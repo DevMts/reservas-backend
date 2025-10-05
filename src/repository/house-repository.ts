@@ -1,6 +1,8 @@
+import type { Decimal } from "@prisma/client/runtime/library";
+
 export interface House {
   id: string;
-  price: number;
+  price: number | Decimal;
   description: string;
   createdAt: Date;
   updatedAt: Date;
