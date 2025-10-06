@@ -3,7 +3,7 @@ import { PrismaUserRepository } from "@/repository/prisma/prisma-user-repository
 import { ListAllUserUseCase } from "@/use-cases/user/list-all-users";
 
 export async function ListAllUserController(
-  request: FastifyRequest,
+  _request: FastifyRequest,
   reply: FastifyReply,
 ) {
   try {

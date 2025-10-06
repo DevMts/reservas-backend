@@ -3,19 +3,13 @@ import z from "zod";
 import { PrismaAddressRepository } from "@/repository/prisma/prisma-address-repository";
 import { PrismaHouseRepository } from "@/repository/prisma/prisma-house-repository";
 import { PrismaUserRepository } from "@/repository/prisma/prisma-user-repository";
+import { bodySchema } from "@/schema/house-schema";
 import { CreateHouseUseCase } from "@/use-cases/house/create-house";
 
 export async function CreateHouseController(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const bodySchema = z.object({
-    price: z.number(),
-    description: z.string(),
-    id_owner: z.string(),
-    id_address: z.string(),
-  });
-
   try {
     const { price, description, id_owner, id_address } = bodySchema.parse(
       request.body,

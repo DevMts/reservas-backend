@@ -1,6 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
 import { PrismaUserRepository } from "@/repository/prisma/prisma-user-repository";
+import { bodySchema } from "@/schema/user-schema";
 import { CompleteUserProfileUseCase } from "@/use-cases/user/complete-user-profile";
 
 export async function completeUserProfileController(
@@ -11,14 +12,6 @@ export async function completeUserProfileController(
     id: z.string(),
   });
 
-  const bodySchema = z.object({
-    date_birth: z.coerce.date(),
-    cpf: z.string().length(11).regex(/^\d{11}$/),
-    ddd: z.string().length(2).regex(/^\d{2}$/),
-    phone: z.string().min(8).max(15),
-    id_address: z.string().optional().nullable(),
-  });
-
   try {
     const { id } = paramsSchema.parse(request.params);
     const { date_birth, cpf, ddd, phone, id_address } = bodySchema.parse(
@@ -26,7 +19,9 @@ export async function completeUserProfileController(
     );
 
     const prismaUserRepository = new PrismaUserRepository();
-    const completeUserProfile = new CompleteUserProfileUseCase(prismaUserRepository);
+    const completeUserProfile = new CompleteUserProfileUseCase(
+      prismaUserRepository,
+    );
 
     const user = await completeUserProfile.execute({
       userId: id,
@@ -39,13 +34,13 @@ export async function completeUserProfileController(
 
     return reply.status(201).send({
       message: "Profile completed successfully",
-      user
+      user,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return reply.status(400).send({
         error: "Validation error",
-        details: error.message
+        details: error.message,
       });
     }
     if (error instanceof Error) {

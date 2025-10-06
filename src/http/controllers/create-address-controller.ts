@@ -1,27 +1,22 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
 import { PrismaAddressRepository } from "@/repository/prisma/prisma-address-repository";
+import { bodySchema } from "@/schema/address-schema";
 import { CreateAddressUseCase } from "@/use-cases/address/create-address";
+
 export async function createAddressController(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const bodySchema = z.object({
-    cep: z.string(),
-    road: z.string(),
-    neighborhood: z.string(),
-    house_number: z.string(),
-    city: z.string(),
-    state: z.string(),
-    country: z.string(),
-  });
-
   try {
     const { cep, road, neighborhood, house_number, city, state, country } =
       bodySchema.parse(request.body);
 
+
+
+
     const addressRepository = new PrismaAddressRepository();
-    const createdAddress = new CreateAddressUseCase(addressRepository);;
+    const createdAddress = new CreateAddressUseCase(addressRepository);
 
     const { address } = await createdAddress.execute({
       cep,

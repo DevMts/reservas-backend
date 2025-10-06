@@ -1,21 +1,44 @@
 import "dotenv/config";
 import fastifyCors from "@fastify/cors";
-import fastifyRoutes from "@fastify/routes";
+import swagger from "@fastify/swagger";
+import Scalar from "@scalar/fastify-api-reference";
 import fastify from "fastify";
+import {
+  jsonSchemaTransform,
+  serializerCompiler,
+  validatorCompiler,
+} from "fastify-type-provider-zod";
 import { auth } from "./lib/auth";
 
 export const app = fastify({
   logger: true,
 });
 
-app.register(fastifyRoutes);
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
 
-app.register(fastifyCors, {
-  origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  credentials: true,
-  maxAge: 86400,
+app.register(fastifyCors, { origin: "*" });
+
+app.register(swagger, {
+  openapi: {
+    info: {
+      title: "API - Reservas",
+      description: "Documentação sobre a API de Reservas",
+      version: "1.0.0",
+    },
+    servers: [{ url: "http://localhost:3333" }],
+  },
+  transform: jsonSchemaTransform
+});
+
+app.register(Scalar, {
+  routePrefix: "/docs", // URL da documentação
+  configuration: {
+    title: "Documentação - Mateus Carvalho",
+    theme: "deepSpace", // temas: default, purple, blue, dark, solarized, etc
+    darkMode: true,
+    hideDownloadButton: false,
+  },
 });
 
 // Use a API diretamente do Better Auth (sem toNodeHandler)
@@ -30,8 +53,9 @@ app.all("/api/auth/*", async (request, reply) => {
       new Request(`http://localhost${request.url}`, {
         method: request.method,
         headers: request.headers as HeadersInit,
-        body: request.method !== "GET" ? JSON.stringify(request.body) : undefined,
-      })
+        body:
+          request.method !== "GET" ? JSON.stringify(request.body) : undefined,
+      }),
     );
 
     // Copia headers da resposta

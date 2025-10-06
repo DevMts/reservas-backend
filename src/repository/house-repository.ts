@@ -26,6 +26,7 @@ export interface HouseRepository {
   create(data: HouseCreateInput): Promise<House>;
   findById(id: string): Promise<House | null>;
   findMany(): Promise<House[]>;
+  findByAddressId(id: string): Promise<House | null>;
   update(id: string, data: Partial<House>): Promise<House | null>;
   delete(id: string): Promise<boolean>;
 }

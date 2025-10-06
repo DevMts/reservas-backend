@@ -33,6 +33,17 @@ export class PrismaHouseRepository implements HouseRepository {
 
     return houses;
   }
+
+  async findByAddressId(id: string): Promise<House | null> {
+    const address = await prisma.house.findFirst({
+      where: {
+        id_address: id,
+      },
+    });
+
+    return address;
+  }
+
   async update(
     id: string,
     data: Partial<House>,

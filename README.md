@@ -1,6 +1,6 @@
 ## 📖 **Regras de Negócio**
 
-* [ ] Cada usuário pode ser **hóspede** e/ou **anfitrião**.
+* [x] Cada usuário pode ser **hóspede** e/ou **anfitrião**.
 * [ ] Um imóvel só pode ser reservado em **datas disponíveis**.
 * [ ] Uma reserva só é confirmada após **pagamento aprovado**.
 * [ ] Anfitriões podem definir **preço por noite**, **mínimo de diárias** e **política de cancelamento**.
@@ -16,7 +16,7 @@
 
 * [x] **Cadastro/Login de usuário** (email/senha e OAuth).
 * [x] **Gerenciamento de perfil** (nome, foto, dados de contato).
-* [ ] **Cadastro de imóvel** (título, descrição, localização, preço, fotos).
+* [x] **Cadastro de imóvel** (título, descrição, localização, preço, fotos).
 * [ ] **Listagem de imóveis disponíveis** com busca e filtros.
 * [ ] **Página de detalhes do imóvel** com fotos, calendário e botão de reserva.
 * [ ] **Sistema de reservas** com seleção de datas e cálculo automático do valor total.

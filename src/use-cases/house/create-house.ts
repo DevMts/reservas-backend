@@ -21,6 +21,10 @@ export class CreateHouseUseCase {
     if (!addressExists) {
       throw new Error("Address not found");
     }
+    const houseExists = await this.houseRepository.findByAddressId(data.id_address);
+    if (houseExists) {
+      throw new Error("House already exists for this address");
+    }
 
     const house = await this.houseRepository.create(data);
 

@@ -33,6 +33,14 @@ export class InMemoryHouseRepository implements HouseRepository {
   async findMany(): Promise<House[]> {
     return this.items;
   }
+  async findByAddressId(id: string): Promise<House | null> {
+    const address = this.items.find((item) => item.id_address === id);
+    if (!address) {
+      return null;
+    }
+    return address;
+
+  }
 
   async update(id: string, data: Partial<House>): Promise<House | null> {
     const houseIndex = this.items.findIndex((item) => item.id === id);
