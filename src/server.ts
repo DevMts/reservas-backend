@@ -1,6 +1,7 @@
 import { app } from "./app";
 import { env } from "./env";
 import { addressRoutes } from "./http/routes/address";
+import { authRoutes } from "./http/routes/auth";
 import { houseRoutes } from "./http/routes/house";
 import { userRoutes } from "./http/routes/user";
 
@@ -20,3 +21,5 @@ app.register(addressRoutes, {
 app.register(houseRoutes, {
   prefix: '/house',
 })
+
+app.register(authRoutes)
