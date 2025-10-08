@@ -53,5 +53,3 @@ app.register(Scalar, {
   },
 });
 
-// Use a API diretamente do Better Auth (sem toNodeHandler)
-
