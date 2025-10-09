@@ -8,6 +8,7 @@ import type {
 import type { UserRepository } from "@/repository/user-repository";
 import { HouseAlreadyRentedError } from "../errors/house-already-rented-error";
 import { HouseNotFoundError } from "../errors/house-not-found-error";
+import { InvalidCheckInDateError } from "../errors/invalid-check-in-date-error";
 import { InvalidCheckOutDateError } from "../errors/invalid-check-out-date-error";
 import { UserNotFoundError } from "../errors/user-not-found-error";
 
@@ -31,6 +32,16 @@ export class CreateRentalUseCase {
 
     if (data.check_in >= data.check_out) {
       throw new InvalidCheckOutDateError();
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normaliza a data para o início do dia
+
+    const checkInDate = new Date(data.check_in);
+    checkInDate.setHours(0, 0, 0, 0); // Normaliza a data de check-in
+
+    if (checkInDate < today) {
+      throw new InvalidCheckInDateError();
     }
 
     const rentalsInSamePeriod =

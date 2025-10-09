@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type {
+  FindByAddressData,
   House,
   HouseCreateInput,
   HouseRepository,
@@ -44,6 +45,26 @@ export class PrismaHouseRepository implements HouseRepository {
     return address;
   }
 
+  async findByUser(id: string, name: string): Promise<House[] | null> {
+    const houses = await prisma.house.findMany({
+      where: {
+        owner: {
+          name: {
+            contains: name,
+            mode: "insensitive"
+          },
+          id: {
+            contains: id,
+            mode: "default"
+          }
+        }
+      }
+
+    });
+
+    return houses;
+  }
+
   async update(
     id: string,
     data: Partial<House>,
@@ -73,5 +94,50 @@ export class PrismaHouseRepository implements HouseRepository {
     });
 
     return !!house;
+  }
+  async findByAddress({
+    cep,
+    city,
+    country,
+    id,
+    neighborhood,
+    road,
+    state
+  }: FindByAddressData): Promise<House[] | null> {
+    const houses = await prisma.house.findMany({
+      where: {
+        address: {
+          city: {
+            contains: city,
+            mode: "insensitive"
+          },
+          cep: {
+            contains: cep,
+            mode: "insensitive"
+          },
+          country: {
+            contains: country,
+            mode: "insensitive"
+          },
+          neighborhood: {
+            contains: neighborhood,
+            mode: "insensitive"
+          },
+          road: {
+            contains: road,
+            mode: "insensitive"
+          },
+          state: {
+            contains: state,
+            mode: "insensitive"
+          },
+          id: {
+            contains: id,
+            mode: "default"
+          }
+        }
+      }
+    })
+    return houses;
   }
 }

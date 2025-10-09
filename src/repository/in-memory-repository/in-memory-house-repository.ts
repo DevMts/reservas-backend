@@ -1,7 +1,19 @@
-import type { House, HouseCreateInput, HouseRepository } from "../house-repository";
+import type {
+  FindByAddressData,
+  House,
+  HouseCreateInput,
+  HouseRepository,
+} from "../house-repository";
+import type { InMemoryAddressRepository } from "./in-memory-address-repository";
+import type { InMemoryUserRepository } from "./in-memory-user-repository";
 
 export class InMemoryHouseRepository implements HouseRepository {
   public items: House[] = [];
+
+  constructor(
+    private addressRepo: InMemoryAddressRepository,
+    private userRepo: InMemoryUserRepository,
+  ) { }
 
   async create(data: HouseCreateInput): Promise<House> {
     const house = {
@@ -13,7 +25,7 @@ export class InMemoryHouseRepository implements HouseRepository {
       id_owner: data.id_owner,
       id_address: data.id_address,
       rentals: data.rentals ?? [],
-    }
+    };
 
     this.items.push(house);
 
@@ -39,7 +51,48 @@ export class InMemoryHouseRepository implements HouseRepository {
       return null;
     }
     return address;
+  }
 
+  async findByAddress(data: FindByAddressData): Promise<House[] | null> {
+    const addresses = this.addressRepo.items.filter(addr =>
+      (data.cep ? addr.cep === data.cep : true) &&
+      (data.city ? addr.city === data.city : true) &&
+      (data.country ? addr.country === data.country : true) &&
+      (data.neighborhood ? addr.neighborhood === data.neighborhood : true) &&
+      (data.road ? addr.road === data.road : true) &&
+      (data.state ? addr.state === data.state : true)
+    );
+
+    if (addresses.length === 0) return null;
+
+    const houses: House[] = [];
+
+    for (const addr of addresses) {
+      const addressHouses = this.items.filter(h => h.id_address === addr.id);
+      houses.push(...addressHouses);
+    }
+
+    return houses;
+  }
+
+
+  async findByUser(id: string, name: string): Promise<House[] | null> {
+    const users = this.userRepo.itens.filter(
+      (item) => item.id === id || item.name === name,
+    );
+
+    if (users.length === 0) return null;
+
+    const houses: House[] = [];
+
+    for (const user of users) {
+      const userHouses = this.items.filter((item) => item.id_owner === user.id);
+      houses.push(...userHouses);
+    }
+
+    return houses.map((h) => ({
+      ...h,
+    }));
   }
 
   async update(id: string, data: Partial<House>): Promise<House | null> {
@@ -59,7 +112,6 @@ export class InMemoryHouseRepository implements HouseRepository {
 
     return house;
   }
-
 
   async delete(id: string): Promise<boolean> {
     const houseIndex = this.items.findIndex((item) => item.id === id);

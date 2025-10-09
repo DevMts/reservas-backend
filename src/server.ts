@@ -3,6 +3,7 @@ import { env } from "./env";
 import { addressRoutes } from "./http/routes/address";
 import { authRoutes } from "./http/routes/auth";
 import { houseRoutes } from "./http/routes/house";
+import { rentalRoutes } from "./http/routes/rental";
 import { userRoutes } from "./http/routes/user";
 
 app.listen({ port: env.PORT }, (err, address) => {
@@ -20,6 +21,9 @@ app.register(addressRoutes, {
 })
 app.register(houseRoutes, {
   prefix: '/house',
+})
+app.register(rentalRoutes, {
+  prefix: '/rental',
 })
 
 app.register(authRoutes)

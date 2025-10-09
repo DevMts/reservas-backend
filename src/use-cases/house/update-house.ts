@@ -5,6 +5,7 @@ export class UpdateHouseUseCase {
 
   async execute(id: string, data: Partial<House>): Promise<House | null> {
     const house = await this.houseRepository.findById(id);
+
     if (!house) {
       throw new Error("House not found");
     }

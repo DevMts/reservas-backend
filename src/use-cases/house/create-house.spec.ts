@@ -11,9 +11,9 @@ describe("Create House Use Case", () => {
   let sut: CreateHouseUseCase;
 
   beforeEach(() => {
-    houseRepository = new InMemoryHouseRepository();
     addressRepository = new InMemoryAddressRepository();
     userRepository = new InMemoryUserRepository(addressRepository);
+    houseRepository = new InMemoryHouseRepository(addressRepository, userRepository);
     sut = new CreateHouseUseCase(
       houseRepository,
       userRepository,

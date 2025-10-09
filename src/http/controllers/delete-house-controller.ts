@@ -1,39 +1,25 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
+import { PrismaAddressRepository } from "@/repository/prisma/prisma-address-repository";
 import { PrismaHouseRepository } from "@/repository/prisma/prisma-house-repository";
-import { UpdateHouseUseCase } from "@/use-cases/house/update-house";
+import { DeleteHouseUseCase } from "@/use-cases/house/delete-house";
 
-export async function updateHouseController(
+export async function deleteHouseController(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const bodySchema = z.object({
-    price: z.number(),
-    description: z.string(),
-  });
   const paransSchema = z.object({
     id: z.string(),
   });
-
   try {
-    const { price, description } = bodySchema.parse(request.body);
     const { id } = paransSchema.parse(request.params);
-    const prismaHouseRepository = new PrismaHouseRepository();
-    const updatedHouse = new UpdateHouseUseCase(prismaHouseRepository);
 
-    const house = await updatedHouse.execute(id, {
-      price,
-      description,
-    });
+    const houseRepository = new PrismaHouseRepository();
+    const address = new PrismaAddressRepository();
+    const deleteHouse = new DeleteHouseUseCase(houseRepository, address);
+    await deleteHouse.execute(id);
 
-    return reply.status(200).send({
-      house: {
-        ...house,
-        price: Number(house?.price),
-        createdAt: house?.createdAt.toISOString(),
-        updatedAt: house?.updatedAt.toISOString(),
-      },
-    })
+    return reply.status(204).send();
   } catch (error) {
     if (error instanceof z.ZodError) {
       return reply.status(400).send({

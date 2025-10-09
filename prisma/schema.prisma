@@ -59,7 +59,7 @@ model Address {
 
 model House {
   id          String   @id @default(uuid())
-  price       Decimal  @db.Decimal(10, 2)
+  price       Decimal  @db.Decimal(14, 2)
   description String   @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt

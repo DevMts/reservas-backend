@@ -32,7 +32,12 @@ export async function CreateHouseController(
     });
 
     return reply.status(201).send({
-      house,
+      house: {
+        ...house,
+        price: Number(house.price),
+        createdAt: house.createdAt.toISOString(),
+        updatedAt: house.updatedAt.toISOString(),
+      },
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
