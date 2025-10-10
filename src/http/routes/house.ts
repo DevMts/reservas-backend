@@ -6,6 +6,7 @@ import { deleteHouseController } from "../controllers/delete-house-controller";
 import { findHouseByAddressController } from "../controllers/find-house-by-address-controller";
 import { findHouseByIdController } from "../controllers/find-house-by-id-controller";
 import { findHouseByUserController } from "../controllers/find-house-by-user-conttroller";
+import { findHouseFreeByDatesController } from "../controllers/find-house-free-by-dates-controller";
 import { updateHouseController } from "../controllers/update-house-controller";
 
 export async function houseRoutes(app: FastifyTypedInstance) {
@@ -106,6 +107,23 @@ export async function houseRoutes(app: FastifyTypedInstance) {
       },
     },
     findHouseByAddressController,
+  );
+  app.get(
+    "/dates",
+    {
+      schema: {
+        tags: ["House"],
+        description: "Find house free by dates",
+        querystring: z.object({
+          check_in: z.coerce.date(),
+          check_out: z.coerce.date(),
+        }),
+        response: {
+          200: z.array(responseSchema).nullable()
+        },
+      },
+    },
+    findHouseFreeByDatesController,
   );
   app.delete(
     "/:id",

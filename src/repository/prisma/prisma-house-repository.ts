@@ -140,4 +140,33 @@ export class PrismaHouseRepository implements HouseRepository {
     })
     return houses;
   }
+  async findByOwner(id: string): Promise<House[] | null> {
+    const houses = await prisma.house.findMany({
+      where: {
+        owner: {
+          id,
+        }
+      }
+    })
+    return houses;
+  }
+  async findByDatesFree(check_in: Date, check_out: Date): Promise<House[] | null> {
+    const houses = await prisma.house.findMany({
+      where: {
+        rentals: {
+          none: {
+            OR: [
+              // New rental starts during an existing rental
+              { check_in: { lt: check_out }, check_out: { gt: check_in } },
+              // New rental ends during an existing rental
+              { check_in: { lt: check_out }, check_out: { gt: check_in } },
+              // New rental encloses an existing rental
+              { check_in: { gte: check_in }, check_out: { lte: check_out } },
+            ]
+          }
+        }
+      }
+    })
+    return houses;
+  }
 }

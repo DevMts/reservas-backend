@@ -39,6 +39,7 @@ export interface HouseRepository {
   findByAddressId(id: string): Promise<House | null>;
   findByAddress(data: FindByAddressData): Promise<House[] | null>;
   findByUser(id?: string, name?: string): Promise<House[] | null>;
+  findByDatesFree(check_in: Date, check_out: Date): Promise<House[] | null>;
   update(id: string, data: Partial<House>): Promise<House | null>;
   delete(id: string): Promise<boolean>;
 }

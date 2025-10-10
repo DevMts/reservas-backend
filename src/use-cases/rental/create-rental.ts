@@ -26,8 +26,13 @@ export class CreateRentalUseCase {
     }
 
     const houseExists = await this.houseRepository.findById(data.house);
+
     if (!houseExists) {
       throw new HouseNotFoundError();
+    }
+
+    if (houseExists.id_owner === data.user) {
+      throw new Error("You cannot rent your own house");
     }
 
     if (data.check_in >= data.check_out) {

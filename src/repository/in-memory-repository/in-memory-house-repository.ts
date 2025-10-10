@@ -5,6 +5,7 @@ import type {
   HouseRepository,
 } from "../house-repository";
 import type { InMemoryAddressRepository } from "./in-memory-address-repository";
+import type { InMemoryRentalRepository } from "./in-memory-rental-repository";
 import type { InMemoryUserRepository } from "./in-memory-user-repository";
 
 export class InMemoryHouseRepository implements HouseRepository {
@@ -13,6 +14,7 @@ export class InMemoryHouseRepository implements HouseRepository {
   constructor(
     private addressRepo: InMemoryAddressRepository,
     private userRepo: InMemoryUserRepository,
+    private rentalRepo?: InMemoryRentalRepository,
   ) { }
 
   async create(data: HouseCreateInput): Promise<House> {
@@ -54,13 +56,14 @@ export class InMemoryHouseRepository implements HouseRepository {
   }
 
   async findByAddress(data: FindByAddressData): Promise<House[] | null> {
-    const addresses = this.addressRepo.items.filter(addr =>
-      (data.cep ? addr.cep === data.cep : true) &&
-      (data.city ? addr.city === data.city : true) &&
-      (data.country ? addr.country === data.country : true) &&
-      (data.neighborhood ? addr.neighborhood === data.neighborhood : true) &&
-      (data.road ? addr.road === data.road : true) &&
-      (data.state ? addr.state === data.state : true)
+    const addresses = this.addressRepo.items.filter(
+      (addr) =>
+        (data.cep ? addr.cep === data.cep : true) &&
+        (data.city ? addr.city === data.city : true) &&
+        (data.country ? addr.country === data.country : true) &&
+        (data.neighborhood ? addr.neighborhood === data.neighborhood : true) &&
+        (data.road ? addr.road === data.road : true) &&
+        (data.state ? addr.state === data.state : true),
     );
 
     if (addresses.length === 0) return null;
@@ -68,13 +71,12 @@ export class InMemoryHouseRepository implements HouseRepository {
     const houses: House[] = [];
 
     for (const addr of addresses) {
-      const addressHouses = this.items.filter(h => h.id_address === addr.id);
+      const addressHouses = this.items.filter((h) => h.id_address === addr.id);
       houses.push(...addressHouses);
     }
 
     return houses;
   }
-
 
   async findByUser(id: string, name: string): Promise<House[] | null> {
     const users = this.userRepo.itens.filter(
@@ -93,6 +95,30 @@ export class InMemoryHouseRepository implements HouseRepository {
     return houses.map((h) => ({
       ...h,
     }));
+  }
+
+  async findByDatesFree(
+    check_in: Date,
+    check_out: Date,
+  ): Promise<House[]> {
+    const houses = this.items.filter((house) => {
+      const houseRentals = this.rentalRepo?.items.filter(
+        (rental) => rental.id_house === house.id,
+      ) ?? [];
+
+      if (houseRentals.length === 0) return true;
+
+      const hasConflict = houseRentals.some((rental) => {
+        const overlaps =
+          !(check_out <= rental.check_in || check_in >= rental.check_out);
+        return overlaps;
+      });
+
+
+      return !hasConflict;
+    });
+
+    return houses;
   }
 
   async update(id: string, data: Partial<House>): Promise<House | null> {

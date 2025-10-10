@@ -10,9 +10,9 @@ async function main() {
   const rentals = [];
 
   // --------------- GERAR ENDEREÇOS E USUÁRIOS ---------------
-  for (let i = 1; i <= 10; i++) {
-    const addressId = `a${i}`;
-    const userId = `u${i}`;
+  for (let i = 1; i <= 15; i++) {
+    const addressId = crypto.randomUUID();
+    const userId = crypto.randomUUID();
 
     // Endereço
     const addr = {
@@ -50,7 +50,7 @@ async function main() {
   for (let i = 1; i <= 15; i++) {
     const ownerIndex = faker.number.int({ min: 0, max: users.length - 1 });
     const houseId = `h${i}`;
-    const addressId = `a${faker.number.int({ min: 1, max: 10 })}`;
+    const addressId = addresses[i - 1].id;
 
     const house = {
       id: houseId,

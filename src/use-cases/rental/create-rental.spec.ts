@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { House } from "@/repository/house-repository";
+import { InMemoryAddressRepository } from "@/repository/in-memory-repository/in-memory-address-repository";
 import { InMemoryHouseRepository } from "@/repository/in-memory-repository/in-memory-house-repository";
 import { InMemoryRentalRepository } from "@/repository/in-memory-repository/in-memory-rental-repository";
 import { InMemoryUserRepository } from "@/repository/in-memory-repository/in-memory-user-repository";
@@ -14,14 +15,19 @@ describe("Create Rental Use Case", () => {
   let rentalRepository: InMemoryRentalRepository;
   let houseRepository: InMemoryHouseRepository;
   let userRepository: InMemoryUserRepository;
+  let addressRepository: InMemoryAddressRepository;
   let sut: CreateRentalUseCase;
   let user: User;
   let house: House;
 
   beforeEach(async () => {
     rentalRepository = new InMemoryRentalRepository();
-    houseRepository = new InMemoryHouseRepository();
-    userRepository = new InMemoryUserRepository();
+    addressRepository = new InMemoryAddressRepository();
+    houseRepository = new InMemoryHouseRepository(
+      addressRepository,
+      userRepository,
+    );
+    userRepository = new InMemoryUserRepository(addressRepository);
     sut = new CreateRentalUseCase(
       rentalRepository,
       houseRepository,
@@ -50,8 +56,8 @@ describe("Create Rental Use Case", () => {
     const rentalData = {
       user: user.id,
       house: house.id,
-      check_in: new Date("2024-01-10"),
-      check_out: new Date("2024-01-15"),
+      check_in: new Date("2026-01-10"),
+      check_out: new Date("2026-01-15"),
     };
 
     const rental = await sut.execute(rentalData);
@@ -67,30 +73,36 @@ describe("Create Rental Use Case", () => {
     const rentalData = {
       user: "non-existing-user-id",
       house: house.id,
-      check_in: new Date("2024-01-10"),
-      check_out: new Date("2024-01-15"),
+      check_in: new Date("2026-01-10"),
+      check_out: new Date("2026-01-15"),
     };
 
-    await expect(sut.execute(rentalData)).rejects.toBeInstanceOf(UserNotFoundError);
+    await expect(sut.execute(rentalData)).rejects.toBeInstanceOf(
+      UserNotFoundError,
+    );
   });
 
   it("should not be able to create a rental if house does not exist", async () => {
     const rentalData = {
       user: user.id,
       house: "non-existing-house-id",
-      check_in: new Date("2024-01-10"),
-      check_out: new Date("2024-01-15"),
+      check_in: new Date("2026-01-10"),
+      check_out: new Date("2026-01-15"),
     };
+    console.log(rentalData);
 
-    await expect(sut.execute(rentalData)).rejects.toBeInstanceOf(HouseNotFoundError);
+
+    await expect(sut.execute(rentalData)).rejects.toBeInstanceOf(
+      HouseNotFoundError,
+    );
   });
 
   it("should not be able to create a rental with check-out date before check-in date", async () => {
     const rentalData = {
       user: user.id,
       house: house.id,
-      check_in: new Date("2024-01-15"),
-      check_out: new Date("2024-01-10"),
+      check_in: new Date("2026-01-15"),
+      check_out: new Date("2026-01-10"),
     };
 
     await expect(sut.execute(rentalData)).rejects.toBeInstanceOf(
@@ -103,16 +115,16 @@ describe("Create Rental Use Case", () => {
     await rentalRepository.create({
       user: user.id,
       house: house.id,
-      check_in: new Date("2024-02-10"),
-      check_out: new Date("2024-02-20"),
+      check_in: new Date("2026-02-10"),
+      check_out: new Date("2026-02-20"),
     });
 
     // Tentativa de novo aluguel com sobreposição (início durante o aluguel existente)
     const overlappingRentalData1 = {
       user: user.id,
       house: house.id,
-      check_in: new Date("2024-02-15"),
-      check_out: new Date("2024-02-25"),
+      check_in: new Date("2026-02-15"),
+      check_out: new Date("2026-02-25"),
     };
 
     await expect(sut.execute(overlappingRentalData1)).rejects.toBeInstanceOf(
@@ -123,8 +135,8 @@ describe("Create Rental Use Case", () => {
     const overlappingRentalData2 = {
       user: user.id,
       house: house.id,
-      check_in: new Date("2024-02-05"),
-      check_out: new Date("2024-02-15"),
+      check_in: new Date("2026-02-05"),
+      check_out: new Date("2026-02-15"),
     };
 
     await expect(sut.execute(overlappingRentalData2)).rejects.toBeInstanceOf(
@@ -135,8 +147,8 @@ describe("Create Rental Use Case", () => {
     const overlappingRentalData3 = {
       user: user.id,
       house: house.id,
-      check_in: new Date("2024-02-05"),
-      check_out: new Date("2024-02-25"),
+      check_in: new Date("2026-02-05"),
+      check_out: new Date("2026-02-25"),
     };
 
     await expect(sut.execute(overlappingRentalData3)).rejects.toBeInstanceOf(
@@ -147,8 +159,8 @@ describe("Create Rental Use Case", () => {
     const overlappingRentalData4 = {
       user: user.id,
       house: house.id,
-      check_in: new Date("2024-02-12"),
-      check_out: new Date("2024-02-18"),
+      check_in: new Date("2026-02-12"),
+      check_out: new Date("2026-02-18"),
     };
 
     await expect(sut.execute(overlappingRentalData4)).rejects.toBeInstanceOf(

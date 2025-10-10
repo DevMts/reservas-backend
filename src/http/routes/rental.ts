@@ -2,6 +2,7 @@ import z from "zod";
 import { bodySchema, responseSchema } from "@/schema/rental-schema";
 import type { FastifyTypedInstance } from "@/types";
 import { createRentalController } from "../controllers/create-rental-controller";
+import { findRentalByHouseController } from "../controllers/find-rental-by-house-controler";
 
 export async function rentalRoutes(app: FastifyTypedInstance) {
   app.post(
@@ -23,4 +24,23 @@ export async function rentalRoutes(app: FastifyTypedInstance) {
     },
     createRentalController,
   );
+  app.get(
+    "/find-by-house",
+    {
+      schema: {
+        tags: ["Rental"],
+        description: "Find rental by house",
+        querystring: z.object({
+          house: z.string(),
+        }),
+        response: {
+          201: z.object({
+            rental: responseSchema,
+          }),
+        }
+      }
+    },
+    findRentalByHouseController,
+  )
+
 }

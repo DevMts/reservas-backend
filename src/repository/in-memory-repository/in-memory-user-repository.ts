@@ -91,6 +91,7 @@ export class InMemoryUserRepository implements UserRepository {
     this.itens[index] = updatedUser;
     return updatedUser;
   }
+
   async addAddress(id: string, addressId: string): Promise<User | null> {
     const userIndex = this.itens.findIndex((user) => user.id === id);
     if (userIndex === -1) {
