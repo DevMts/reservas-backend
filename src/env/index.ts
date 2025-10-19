@@ -6,6 +6,15 @@ const envSchema = z.object({
 	PORT: z.coerce.number().default(3333),
 	DATABASE_URL: z.url().startsWith("postgresql://"),
 	BETTER_AUTH_SECRET: z.string().nonempty(),
+	GITHUB_CLIENT_ID: z.string(),
+	GITHUB_CLIENT_SECRET: z.string(),
+	GOOGLE_CLIENT_ID: z.string(),
+	GOOGLE_CLIENT_SECRET: z.string(),
+	SMTP_HOST: z.string(),
+	SMTP_PORT: z.string(),
+	SMTP_USER: z.string(),
+	SMTP_PASS: z.string(),
+
 });
 
 const _env = envSchema.safeParse(process.env);
@@ -16,6 +25,6 @@ if (_env.success === false) {
 }
 log(
 	"Environment variables loaded successfully" +
-		JSON.stringify(_env.data, null, 2),
+	JSON.stringify(_env.data, null, 2),
 );
 export const env = _env.data;

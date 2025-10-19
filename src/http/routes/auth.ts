@@ -37,7 +37,7 @@ export async function authRoutes(app: FastifyTypedInstance) {
       body: EmailPasswordSchema,
       response: {
         200: SignInResponseSchema,
-        401: ErrorResponseSchema,
+        // 401: ErrorResponseSchema,
       },
     },
     handler: handleBetterAuth,

@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
-import { auth } from "../lib/auth"; // Importe seu Better Auth aqui
+import { auth } from "../lib/auth";
 
 export async function handleBetterAuth(
   request: FastifyRequest,
@@ -9,15 +9,13 @@ export async function handleBetterAuth(
   console.log("🔵 Better Auth Request:", request.method, request.url);
 
   try {
-    // Constrói a URL completa
     const url = new URL(request.url, "http://localhost:3333");
 
     if (request.url === "/api/auth/update-user") {
-
       const body = z.object({
         name: z.string().optional(),
         image: z.url().optional(),
-      })
+      });
       const { name, image } = body.parse(request.body);
       await auth.api.updateUser({
         body: {
@@ -25,7 +23,7 @@ export async function handleBetterAuth(
           image,
         },
         headers: request.headers as HeadersInit,
-      },);
+      });
       return reply.status(204).send({ success: true });
     }
 
@@ -46,12 +44,29 @@ export async function handleBetterAuth(
       reply.header(key, value);
     });
 
-    // Retorna a resposta
     console.log("🟢 Better Auth Response:", response.status);
     console.log("Headers:", response.headers);
 
-    const data = await response.json();
-    return reply.code(response.status).send(data);
+    // ✅ CORREÇÃO: Verifica se a resposta tem conteúdo antes de fazer parse
+    const contentType = response.headers.get("content-type");
+
+    // Se for redirect ou não tiver corpo, não tenta fazer parse
+    if (response.status === 302 || response.status === 301) {
+      return reply.code(response.status).send();
+    }
+
+    // Se tiver conteúdo JSON, faz o parse
+    if (contentType?.includes("application/json")) {
+      const text = await response.text();
+      if (text) {
+        const data = JSON.parse(text);
+        return reply.code(response.status).send(data);
+      }
+    }
+
+    // Para outros tipos de resposta, retorna vazio
+    return reply.code(response.status).send();
+
   } catch (error) {
     console.error("❌ Better Auth Error:", error);
 

@@ -15,7 +15,7 @@ export const app = fastify({
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-app.register(fastifyCors, { origin: "*", });
+app.register(fastifyCors, { origin: "http://localhost:3000", credentials: true });
 
 app.register(swagger, {
   openapi: {
