@@ -61,9 +61,8 @@ export const auth = betterAuth({
   </div>
   `,
       });
-
-
     },
+    resetPasswordTokenExpiresIn: 30 * 60, // 30 minutos
 
     onPasswordReset: async ({ user }, _request) => {
       await sendEmail({

@@ -184,6 +184,22 @@ export async function authRoutes(app: FastifyTypedInstance) {
     handler: handleBetterAuth,
   });
 
+  app.get("/api/auth/get-id", {
+    schema: {
+      description: "Returns the current user's ID",
+      tags: ["Auth"],
+      security: [{ bearerAuth: [] }],
+      response: {
+        200: z.object({
+          success: z.boolean(),
+          id: z.string().nullable(),
+        }),
+        401: ErrorResponseSchema,
+      },
+    },
+    handler: handleBetterAuth,
+  });
+
   // Catch-all para outras rotas do Better Auth
   app.route({
     method: ["GET", "POST", "PUT", "DELETE", "PATCH"],

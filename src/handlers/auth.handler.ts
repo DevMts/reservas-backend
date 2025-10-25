@@ -27,6 +27,20 @@ export async function handleBetterAuth(
       return reply.status(204).send({ success: true });
     }
 
+    if (request.url === "/api/auth/get-id") {
+      const headerEntries = Object.entries(request.headers)
+        .filter(([_key, value]) => typeof value === "string") as [string, string][];
+
+      const headers = new Headers(headerEntries); // ✅ tipagem 100% válida
+
+      const session = await auth.api.getSession({ headers });
+      const id = session?.user?.id || null;
+
+      return reply.status(200).send({ success: true, id });
+    }
+
+
+
     // Chama o handler do Better Auth
     const response = await auth.handler(
       new Request(url.toString(), {

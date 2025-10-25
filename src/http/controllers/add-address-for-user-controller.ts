@@ -49,6 +49,7 @@ export async function AddAddressForUserProfileController(
 
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log(error);
       return reply.status(400).send({
         error: "Validation error",
         details: error.message,

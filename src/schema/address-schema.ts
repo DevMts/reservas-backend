@@ -9,3 +9,7 @@ export const bodySchema = z.object({
   state: z.string(),
   country: z.string(),
 });
+
+export const responseSchema = bodySchema.extend({
+  id: z.string(),
+});

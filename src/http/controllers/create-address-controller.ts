@@ -12,9 +12,6 @@ export async function createAddressController(
     const { cep, road, neighborhood, house_number, city, state, country } =
       bodySchema.parse(request.body);
 
-
-
-
     const addressRepository = new PrismaAddressRepository();
     const createdAddress = new CreateAddressUseCase(addressRepository);
 
@@ -34,14 +31,17 @@ export async function createAddressController(
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log(error)
       return reply.status(400).send({
         error: "Validation error",
         details: error.message,
       });
     }
     if (error instanceof Error) {
+      console.log(error)
       return reply.status(400).send({ error: error.message });
     }
     return reply.status(500).send({ error: "Internal server error" });
   }
 }
+z

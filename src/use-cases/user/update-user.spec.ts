@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { InMemoryAddressRepository } from "@/repository/in-memory-repository/in-memory-address-repository";
 import { InMemoryUserRepository } from "../../repository/in-memory-repository/in-memory-user-repository";
 import { ResourceNotFoundError } from "../errors/resource-not-found-error";
 import { UserAlreadyExistsError } from "../errors/user-already-exists-error";
@@ -6,10 +7,12 @@ import { UpdateUserUseCase } from "./update-user";
 
 describe("Update User Use Case", () => {
   let userRepository: InMemoryUserRepository;
+  let addressRepository: InMemoryAddressRepository;
   let sut: UpdateUserUseCase;
 
   beforeEach(() => {
-    userRepository = new InMemoryUserRepository();
+    addressRepository = new InMemoryAddressRepository();
+    userRepository = new InMemoryUserRepository(addressRepository);
     sut = new UpdateUserUseCase(userRepository);
   });
 
