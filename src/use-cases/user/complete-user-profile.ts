@@ -14,8 +14,13 @@ export class CompleteUserProfileUseCase {
     const { userId, date_birth, cpf, ddd, phone, id_address } = data;
 
     const user = await this.userRepository.findById(userId);
+
     if (!user) {
       throw new Error("User not found");
+    }
+
+    if (user.completed_profile) {
+      throw new Error("User profile is already complete");
     }
 
     const existingCpfUser = await this.userRepository.findByCpf(cpf);
@@ -33,6 +38,12 @@ export class CompleteUserProfileUseCase {
 
     if (!updatedUser) {
       throw new Error("Failed to update user profile");
+    }
+
+    const completedUser = await this.userRepository.completeProfile(userId);
+
+    if (!completedUser) {
+      throw new Error("Failed to complete user profile");
     }
 
     return updatedUser;

@@ -31,7 +31,7 @@ export async function handleBetterAuth(
       const headerEntries = Object.entries(request.headers)
         .filter(([_key, value]) => typeof value === "string") as [string, string][];
 
-      const headers = new Headers(headerEntries); // ✅ tipagem 100% válida
+      const headers = new Headers(headerEntries);
 
       const session = await auth.api.getSession({ headers });
       const id = session?.user?.id || null;
@@ -41,7 +41,6 @@ export async function handleBetterAuth(
 
 
 
-    // Chama o handler do Better Auth
     const response = await auth.handler(
       new Request(url.toString(), {
         method: request.method,
@@ -53,7 +52,6 @@ export async function handleBetterAuth(
       }),
     );
 
-    // Copia todos os headers da resposta
     response.headers.forEach((value: string, key: string) => {
       reply.header(key, value);
     });
@@ -61,15 +59,13 @@ export async function handleBetterAuth(
     console.log("🟢 Better Auth Response:", response.status);
     console.log("Headers:", response.headers);
 
-    // ✅ CORREÇÃO: Verifica se a resposta tem conteúdo antes de fazer parse
     const contentType = response.headers.get("content-type");
 
-    // Se for redirect ou não tiver corpo, não tenta fazer parse
+
     if (response.status === 302 || response.status === 301) {
       return reply.code(response.status).send();
     }
 
-    // Se tiver conteúdo JSON, faz o parse
     if (contentType?.includes("application/json")) {
       const text = await response.text();
       if (text) {
@@ -78,7 +74,6 @@ export async function handleBetterAuth(
       }
     }
 
-    // Para outros tipos de resposta, retorna vazio
     return reply.code(response.status).send();
 
   } catch (error) {

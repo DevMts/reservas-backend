@@ -43,11 +43,11 @@ export async function userRoutes(app: FastifyTypedInstance) {
         params: z.object({
           id: z.string(),
         }),
-        response: {
-          200: z.object({
-            user: userResponse,
-          }),
-        },
+        // response: {
+        //   200: z.object({
+        //     user: userResponse,
+        //   }),
+        // },
       },
     },
     findByIdUserController,
@@ -63,12 +63,12 @@ export async function userRoutes(app: FastifyTypedInstance) {
           userId: z.string(),
           addressId: z.string(),
         }),
-        response: {
-          200: z.object({
-            message: z.string(),
-            updatedUser: userResponse,
-          }),
-        },
+        // response: {
+        //   200: z.object({
+        //     message: z.string(),
+        //     updatedUser: userResponse,
+        //   }),
+        // },
       },
     },
     AddAddressForUserProfileController,

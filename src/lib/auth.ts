@@ -75,6 +75,7 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: ["http://localhost:3000"],
+
   socialProviders: {
     github: {
       clientId: env.GITHUB_CLIENT_ID,
@@ -88,6 +89,14 @@ export const auth = betterAuth({
   },
   logger: {
     level: "debug" // Adicione isso para ver logs detalhados
-  }
+  },
+  advanced: {
 
+    cookiePrefix: "better-auth",
+    cookieOptions: {
+      secure: false, // ⚠️ importante em dev
+      sameSite: "none", // ✅ permite envio de outro domínio (ex: 3000)
+    },
+    useSecureCookies: false, // ⚠️ importante em dev
+  },
 });

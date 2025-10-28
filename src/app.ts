@@ -8,6 +8,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
+
 export const app = fastify({
   logger: true,
 });
@@ -15,9 +16,16 @@ export const app = fastify({
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
+
+
 app.register(fastifyCors, {
-  origin: "http://localhost:3000", credentials: true, methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // garante que o PUT seja aceito
+  origin: 'http://localhost:3000', // Ou a porta do seu front-end (pode ser 3000, 5173, etc)
+  credentials: true, // CRITICAL: Permite envio de cookies
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Set-Cookie'], // Importante para o Better Auth
 });
+
 
 app.register(swagger, {
   openapi: {

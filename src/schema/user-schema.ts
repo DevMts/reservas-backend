@@ -15,4 +15,6 @@ export const userResponse = bodySchema.extend({
   name: z.string(),
   email: z.email(),
   emailVerified: z.boolean(),
+  image: z.url().nullable(),
+  complete_profile: z.boolean(),
 });

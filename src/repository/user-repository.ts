@@ -10,6 +10,7 @@ export interface UserRepository {
   update(id: string, data: Partial<User>): Promise<User | null>;
   addAddress(id: string, addressId: string): Promise<User | null>;
   delete(id: string): Promise<boolean>;
+  completeProfile(id: string): Promise<User | null>;
 }
 
 export interface User {
@@ -26,6 +27,7 @@ export interface User {
   ddd: string | null;
   phone: string | null;
   id_address: string | null;
+  completed_profile?: boolean;
 }
 
 export interface UserCreateInput {

@@ -93,4 +93,10 @@ export class PrismaUserRepository implements UserRepository {
     });
     return true;
   }
+  async completeProfile(id: string): Promise<User | null> {
+    return this.update(id, {
+      completed_profile: true,
+      updatedAt: new Date(),
+    });
+  }
 }
