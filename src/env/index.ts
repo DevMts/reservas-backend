@@ -4,7 +4,7 @@ import z from "zod";
 
 const envSchema = z.object({
 	PORT: z.coerce.number().default(3333),
-	DATABASE_URL: z.url().startsWith("postgresql://"),
+	DATABASE_URL: z.url(),
 	BETTER_AUTH_SECRET: z.string().nonempty(),
 	GITHUB_CLIENT_ID: z.string(),
 	GITHUB_CLIENT_SECRET: z.string(),
@@ -14,7 +14,8 @@ const envSchema = z.object({
 	SMTP_PORT: z.string(),
 	SMTP_USER: z.string(),
 	SMTP_PASS: z.string(),
-
+	SITE_URL: z.url().default("http://localhost:3333"),
+	SITE_API_URL: z.url().default("http://localhost:3000")
 });
 
 const _env = envSchema.safeParse(process.env);

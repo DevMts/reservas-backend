@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
+import { env } from "@/env";
 import { auth } from "../lib/auth";
 
 export async function handleBetterAuth(
@@ -9,7 +10,7 @@ export async function handleBetterAuth(
   console.log("🔵 Better Auth Request:", request.method, request.url);
 
   try {
-    const url = new URL(request.url, "http://localhost:3333");
+    const url = new URL(request.url, env.SITE_URL);
 
     if (request.url === "/api/auth/update-user") {
       const body = z.object({
@@ -28,8 +29,9 @@ export async function handleBetterAuth(
     }
 
     if (request.url === "/api/auth/get-id") {
-      const headerEntries = Object.entries(request.headers)
-        .filter(([_key, value]) => typeof value === "string") as [string, string][];
+      const headerEntries = Object.entries(request.headers).filter(
+        ([_key, value]) => typeof value === "string",
+      ) as [string, string][];
 
       const headers = new Headers(headerEntries);
 
@@ -38,8 +40,6 @@ export async function handleBetterAuth(
 
       return reply.status(200).send({ success: true, id });
     }
-
-
 
     const response = await auth.handler(
       new Request(url.toString(), {
@@ -61,7 +61,6 @@ export async function handleBetterAuth(
 
     const contentType = response.headers.get("content-type");
 
-
     if (response.status === 302 || response.status === 301) {
       return reply.code(response.status).send();
     }
@@ -75,7 +74,6 @@ export async function handleBetterAuth(
     }
 
     return reply.code(response.status).send();
-
   } catch (error) {
     console.error("❌ Better Auth Error:", error);
 

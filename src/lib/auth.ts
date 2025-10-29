@@ -74,7 +74,7 @@ export const auth = betterAuth({
       console.log(`Password for user ${user.email} has been reset.`);
     },
   },
-  trustedOrigins: ["http://localhost:3000"],
+  trustedOrigins: [env.SITE_API_URL],
 
   socialProviders: {
     github: {

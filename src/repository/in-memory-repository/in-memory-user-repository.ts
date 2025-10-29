@@ -123,4 +123,17 @@ export class InMemoryUserRepository implements UserRepository {
   async count(): Promise<number> {
     return this.itens.length;
   }
+
+  async completeProfile(id: string): Promise<User | null> {
+    const user = this.itens.findIndex((user) => user.id === id);
+
+    if (user === -1) {
+      return null;
+    }
+
+    this.itens[user].completed_profile = true;
+
+    return this.itens[user];
+
+  }
 }

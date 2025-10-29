@@ -8,6 +8,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
+import { env } from "./env";
 
 export const app = fastify({
   logger: true,
@@ -19,7 +20,7 @@ app.setSerializerCompiler(serializerCompiler);
 
 
 app.register(fastifyCors, {
-  origin: 'http://localhost:3000', // Ou a porta do seu front-end (pode ser 3000, 5173, etc)
+  origin: env.SITE_URL, // Ou a porta do seu front-end (pode ser 3000, 5173, etc)
   credentials: true, // CRITICAL: Permite envio de cookies
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -48,7 +49,7 @@ app.register(swagger, {
         bearerAuth: [],
       },
     ],
-    servers: [{ url: "http://localhost:3333" }],
+    servers: [{ url: env.SITE_URL }],
   },
   transform: jsonSchemaTransform
 });
