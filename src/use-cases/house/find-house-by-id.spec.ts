@@ -1,15 +1,24 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { House } from "@/repository/house-repository";
+import { InMemoryAddressRepository } from "@/repository/in-memory-repository/in-memory-address-repository";
 import { InMemoryHouseRepository } from "@/repository/in-memory-repository/in-memory-house-repository";
+import { InMemoryUserRepository } from "@/repository/in-memory-repository/in-memory-user-repository";
 import { FindHouseByIdUseCase } from "./find-house-by-id";
 
 describe("Find House By Id Use Case", () => {
   let houseRepository: InMemoryHouseRepository;
+  let addressRepository: InMemoryAddressRepository;
+  let userRepository: InMemoryUserRepository;
   let sut: FindHouseByIdUseCase;
   let createdHouse: House;
 
   beforeEach(async () => {
-    houseRepository = new InMemoryHouseRepository();
+    addressRepository = new InMemoryAddressRepository();
+    userRepository = new InMemoryUserRepository(addressRepository);
+    houseRepository = new InMemoryHouseRepository(
+      addressRepository,
+      userRepository,
+    );
     sut = new FindHouseByIdUseCase(houseRepository);
 
     // Criar uma casa para os testes

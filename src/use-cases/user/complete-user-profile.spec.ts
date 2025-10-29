@@ -1,15 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { InMemoryAddressRepository } from "@/repository/in-memory-repository/in-memory-address-repository";
 import { InMemoryUserRepository } from "@/repository/in-memory-repository/in-memory-user-repository";
 import type { User } from "@/repository/user-repository";
 import { CompleteUserProfileUseCase } from "./complete-user-profile";
 
 describe("Complete User Profile Use Case", () => {
   let userRepository: InMemoryUserRepository;
+  let addressRepository: InMemoryAddressRepository;
   let sut: CompleteUserProfileUseCase;
   let user: User;
 
   beforeEach(async () => {
-    userRepository = new InMemoryUserRepository();
+    addressRepository = new InMemoryAddressRepository();
+    userRepository = new InMemoryUserRepository(addressRepository);
     sut = new CompleteUserProfileUseCase(userRepository);
 
     // Create a base user for tests

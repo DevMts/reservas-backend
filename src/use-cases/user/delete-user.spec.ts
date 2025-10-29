@@ -1,14 +1,17 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { InMemoryAddressRepository } from "@/repository/in-memory-repository/in-memory-address-repository";
 import { InMemoryUserRepository } from "../../repository/in-memory-repository/in-memory-user-repository";
 import { ResourceNotFoundError } from "../errors/resource-not-found-error";
 import { DeleteUserUseCase } from "./delete-user";
 
 describe("Delete User Use Case", () => {
   let userRepository: InMemoryUserRepository;
+  let addressRepository: InMemoryAddressRepository;
   let sut: DeleteUserUseCase;
 
   beforeEach(() => {
-    userRepository = new InMemoryUserRepository();
+    addressRepository = new InMemoryAddressRepository();
+    userRepository = new InMemoryUserRepository(addressRepository);
     sut = new DeleteUserUseCase(userRepository);
   });
 

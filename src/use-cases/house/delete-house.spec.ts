@@ -3,18 +3,24 @@ import type { Address } from "@/repository/address-repository";
 import type { House } from "@/repository/house-repository";
 import { InMemoryAddressRepository } from "@/repository/in-memory-repository/in-memory-address-repository";
 import { InMemoryHouseRepository } from "@/repository/in-memory-repository/in-memory-house-repository";
+import { InMemoryUserRepository } from "@/repository/in-memory-repository/in-memory-user-repository";
 import { DeleteHouseUseCase } from "./delete-house";
 
 describe("Delete House Use Case", () => {
   let houseRepository: InMemoryHouseRepository;
   let addressRepository: InMemoryAddressRepository;
+  let userRepository: InMemoryUserRepository;
   let sut: DeleteHouseUseCase;
   let house: House;
   let address: Address;
 
   beforeEach(async () => {
-    houseRepository = new InMemoryHouseRepository();
     addressRepository = new InMemoryAddressRepository();
+    userRepository = new InMemoryUserRepository(addressRepository);
+    houseRepository = new InMemoryHouseRepository(
+      addressRepository,
+      userRepository,
+    );
     sut = new DeleteHouseUseCase(houseRepository, addressRepository);
 
     // Criar dados de teste

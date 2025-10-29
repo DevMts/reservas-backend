@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { AddressRepository } from "../../repository/address-repository";
 import { InMemoryAddressRepository } from "../../repository/in-memory-repository/in-memory-address-repository";
 import { InMemoryUserRepository } from "../../repository/in-memory-repository/in-memory-user-repository";
 import type { UserRepository } from "../../repository/user-repository";
@@ -10,14 +9,14 @@ import { CreateUserUseCase } from "./create-user";
 describe("Create User Use Case", () => {
   let userRepository: UserRepository;
   let createUserUseCase: CreateUserUseCase;
-  let addressRepository: AddressRepository;
+  let addressRepository: InMemoryAddressRepository;
   let createAddressUseCase: CreateAddressUseCase;
 
   beforeEach(() => {
-    userRepository = new InMemoryUserRepository();
     createUserUseCase = new CreateUserUseCase(userRepository);
     addressRepository = new InMemoryAddressRepository();
     createAddressUseCase = new CreateAddressUseCase(addressRepository);
+    userRepository = new InMemoryUserRepository(addressRepository);
   });
   it("should create a new user", async () => {
     const { user } = await createUserUseCase.execute({

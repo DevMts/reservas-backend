@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { House } from "@/repository/house-repository";
+import { InMemoryAddressRepository } from "@/repository/in-memory-repository/in-memory-address-repository";
 import { InMemoryHouseRepository } from "@/repository/in-memory-repository/in-memory-house-repository";
 import { InMemoryRentalRepository } from "@/repository/in-memory-repository/in-memory-rental-repository";
 import { InMemoryUserRepository } from "@/repository/in-memory-repository/in-memory-user-repository";
@@ -9,6 +10,9 @@ import { UpdateRentalUseCase } from "./update-rental";
 
 describe("Update Rental Use Case", () => {
   let rentalRepository: InMemoryRentalRepository;
+  let houseRepository: InMemoryHouseRepository;
+  let userRepository: InMemoryUserRepository;
+  let addressRepository: InMemoryAddressRepository;
   let sut: UpdateRentalUseCase;
   let user: User;
   let house: House;
@@ -16,8 +20,12 @@ describe("Update Rental Use Case", () => {
 
   beforeEach(async () => {
     rentalRepository = new InMemoryRentalRepository();
-    const userRepository = new InMemoryUserRepository();
-    const houseRepository = new InMemoryHouseRepository();
+    addressRepository = new InMemoryAddressRepository();
+    userRepository = new InMemoryUserRepository(addressRepository);
+    houseRepository = new InMemoryHouseRepository(
+      addressRepository,
+      userRepository,
+    );
     sut = new UpdateRentalUseCase(rentalRepository);
 
     user = await userRepository.create({

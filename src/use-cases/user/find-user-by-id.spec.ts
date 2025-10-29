@@ -1,14 +1,17 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { InMemoryAddressRepository } from "@/repository/in-memory-repository/in-memory-address-repository";
 import { InMemoryUserRepository } from "../../repository/in-memory-repository/in-memory-user-repository";
 import { ResourceNotFoundError } from "../errors/resource-not-found-error";
 import { FindUserByIdUseCase } from "./find-user-by-id";
 
 describe("Find User By Id Use Case", () => {
   let userRepository: InMemoryUserRepository;
+  let addressRepository: InMemoryAddressRepository;
   let sut: FindUserByIdUseCase;
 
   beforeEach(() => {
-    userRepository = new InMemoryUserRepository();
+    addressRepository = new InMemoryAddressRepository();
+    userRepository = new InMemoryUserRepository(addressRepository);
     sut = new FindUserByIdUseCase(userRepository);
   });
 

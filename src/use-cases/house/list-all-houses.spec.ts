@@ -1,13 +1,22 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { InMemoryAddressRepository } from "@/repository/in-memory-repository/in-memory-address-repository";
 import { InMemoryHouseRepository } from "@/repository/in-memory-repository/in-memory-house-repository";
+import { InMemoryUserRepository } from "@/repository/in-memory-repository/in-memory-user-repository";
 import { ListAllHousesUseCase } from "./list-all-houses";
 
 describe("List All Houses Use Case", () => {
   let houseRepository: InMemoryHouseRepository;
+  let userRepository: InMemoryUserRepository;
+  let addressRepository: InMemoryAddressRepository;
   let sut: ListAllHousesUseCase;
 
   beforeEach(() => {
-    houseRepository = new InMemoryHouseRepository();
+    addressRepository = new InMemoryAddressRepository();
+    userRepository = new InMemoryUserRepository(addressRepository);
+    houseRepository = new InMemoryHouseRepository(
+      addressRepository,
+      userRepository,
+    );
     sut = new ListAllHousesUseCase(houseRepository);
   });
 
