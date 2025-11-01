@@ -17,16 +17,13 @@ export const app = fastify({
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-
-
 app.register(fastifyCors, {
   origin: env.SITE_URL, // Ou a porta do seu front-end (pode ser 3000, 5173, etc)
   credentials: true, // CRITICAL: Permite envio de cookies
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Set-Cookie'], // Importante para o Better Auth
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["Set-Cookie"], // Importante para o Better Auth
 });
-
 
 app.register(swagger, {
   openapi: {
@@ -51,7 +48,7 @@ app.register(swagger, {
     ],
     servers: [{ url: env.SITE_URL }],
   },
-  transform: jsonSchemaTransform
+  transform: jsonSchemaTransform,
 });
 
 app.register(Scalar, {
@@ -63,4 +60,3 @@ app.register(Scalar, {
     hideDownloadButton: false,
   },
 });
-

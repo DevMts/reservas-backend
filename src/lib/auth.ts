@@ -23,7 +23,7 @@ export const auth = betterAuth({
         html: `
   <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 24px;">
     <div style="max-width: 480px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden;">
-      
+
       <!-- Cabeçalho -->
       <div style="background-color: #00BC7D; color: white; text-align: center; padding: 20px 0;">
         <h1 style="margin: 0; font-size: 22px;">Redefinir Senha</h1>

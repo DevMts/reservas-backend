@@ -6,7 +6,7 @@ import { houseRoutes } from "./http/routes/house";
 import { rentalRoutes } from "./http/routes/rental";
 import { userRoutes } from "./http/routes/user";
 
-app.listen({ port: env.PORT }, (err, address) => {
+app.listen({ port: env.PORT, host: "0.0.0.0" }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);
@@ -14,16 +14,16 @@ app.listen({ port: env.PORT }, (err, address) => {
   console.log(`Server listening at ${address}, in ${env.PORT} mode`);
 });
 app.register(userRoutes, {
-  prefix: '/user',
-})
+  prefix: "/user",
+});
 app.register(addressRoutes, {
-  prefix: '/address',
-})
+  prefix: "/address",
+});
 app.register(houseRoutes, {
-  prefix: '/house',
-})
+  prefix: "/house",
+});
 app.register(rentalRoutes, {
-  prefix: '/rental',
-})
+  prefix: "/rental",
+});
 
-app.register(authRoutes)
+app.register(authRoutes);
